@@ -5,9 +5,7 @@ export default function EventList({ items }: { items: Event[] }) {
   return (
     <ul>
       {items.map((event) => (
-        <li key={event.id}>
-          <EventItem event={event} />
-        </li>
+          <EventItem event={event} key={event.id} />
       ))}
     </ul>
   );

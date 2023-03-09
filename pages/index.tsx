@@ -1,5 +1,3 @@
-import Head from "next/head";
-import styles from "@/styles/Home.module.css";
 import { useMemo } from "react";
 import { getFeaturedEvents } from "@/dummy-data";
 import EventList from "@/components/events/EventList";

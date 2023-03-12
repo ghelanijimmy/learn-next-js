@@ -1,32 +1,55 @@
 import EventContent from "@/components/event-detail/event-content";
 import EventLogistics from "@/components/event-detail/event-logistics";
 import EventSummary from "@/components/event-detail/event-summary";
-import { getEventById } from "@/dummy-data";
-import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { getEventById, getFeaturedEvents } from "@/utils/api";
+import { InferGetStaticPropsType } from "next";
 
-export default function EventDetailPage() {
-  const router = useRouter();
-
-  console.log(router.query);
-
-  const { eventId } = router.query;
-
-  const event = useMemo(() => getEventById(eventId as string), []);
-
-  console.log(event);
-
-  if(!event){
-    return <p>No event found!</p>
+export default function EventDetailPage({
+  event,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  if (!event) {
+    return (
+      <div className="center">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   return (
     <>
       <EventSummary title={event.title} />
-      <EventLogistics date={event.date} address={event.location} image={event.image} imageAlt={event.title} />
+      <EventLogistics
+        date={event.date}
+        address={event.location}
+        image={event.image}
+        imageAlt={event.title}
+      />
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
     </>
   );
+}
+
+export async function getStaticProps(context: any) {
+  const eventId = context.params.eventId;
+  const event = await getEventById(eventId);
+
+  return {
+    props: {
+      event,
+    },
+    revalidate: 30,
+  };
+}
+
+export async function getStaticPaths() {
+  const events = await getFeaturedEvents();
+
+  const paths = events.map((event) => ({ params: { eventId: event.id } }));
+
+  return {
+    paths,
+    fallback: true,
+  };
 }

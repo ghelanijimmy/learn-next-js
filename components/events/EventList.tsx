@@ -6,7 +6,7 @@ export default function EventList({ items }: { items: Event[] }) {
   return (
     <ul className={styles.list}>
       {items.map((event) => (
-          <EventItem {...event} key={event.id} />
+        <EventItem {...event} key={event.id} />
       ))}
     </ul>
   );

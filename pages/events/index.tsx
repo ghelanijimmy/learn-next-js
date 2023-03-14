@@ -3,6 +3,7 @@ import EventsSearch from "@/components/events/events-search";
 import { getAllEvents } from "@/utils/api";
 import { useRouter } from "next/router";
 import { InferGetStaticPropsType } from "next";
+import Head from "next/head";
 
 export default function AllEventsPage({
   events,
@@ -13,10 +14,17 @@ export default function AllEventsPage({
     router.push(fullPath);
   };
   return (
-    <div>
+    <>
+      <Head>
+        <title>All Events</title>
+        <meta
+          name="description"
+          content="Find a lot of great events that allow you to evolve..."
+        />
+      </Head>
       <EventsSearch onSearch={findEventsHandler} />
       <EventList items={events} />
-    </div>
+    </>
   );
 }
 

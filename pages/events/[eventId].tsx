@@ -3,6 +3,7 @@ import EventLogistics from "@/components/event-detail/event-logistics";
 import EventSummary from "@/components/event-detail/event-summary";
 import { getEventById, getFeaturedEvents } from "@/utils/api";
 import { InferGetStaticPropsType } from "next";
+import Head from "next/head";
 
 export default function EventDetailPage({
   event,
@@ -17,6 +18,10 @@ export default function EventDetailPage({
 
   return (
     <>
+      <Head>
+        <title>{event.title}</title>
+        <meta name="description" content={event.description} />
+      </Head>
       <EventSummary title={event.title} />
       <EventLogistics
         date={event.date}

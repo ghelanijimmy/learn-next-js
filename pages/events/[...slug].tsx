@@ -4,15 +4,29 @@ import ResultsTitle from "@/components/events/results-title";
 import Button from "@/components/ui/button";
 import ErrorAlert from "@/components/ui/error-alert";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import Head from "next/head";
 
 export default function FilteredEventsPage({
   events,
   hasError,
   date,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name="description"
+        content={`All events for ${new Date(date).getMonth()}/${new Date(
+          date
+        ).getFullYear()}`}
+      />
+    </Head>
+  );
+
   if (hasError) {
     return (
       <>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid filter. Please adjust your values!</p>
         </ErrorAlert>
@@ -23,11 +37,10 @@ export default function FilteredEventsPage({
     );
   }
 
-  if (!events.length) return <p className="center">Loading...</p>;
-
   if (events.length === 0) {
     return (
       <>
+        {pageHeadData}
         <ErrorAlert>
           <p>No events found for the chosen filter!</p>
         </ErrorAlert>
@@ -39,10 +52,11 @@ export default function FilteredEventsPage({
   }
 
   return (
-    <div>
+    <>
+      {pageHeadData}
       <ResultsTitle date={date} />
       <EventList items={events} />
-    </div>
+    </>
   );
 }
 

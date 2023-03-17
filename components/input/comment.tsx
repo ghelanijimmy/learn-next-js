@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import CommentList from "./comment-list";
 import NewComment from "./new-comment";
@@ -9,6 +9,7 @@ export type Comment = {
   name: string;
   text: string;
   id?: string;
+  eventId?: string;
 };
 
 function Comments(props: { eventId: string }) {
@@ -21,6 +22,14 @@ function Comments(props: { eventId: string }) {
     setShowComments((prevStatus) => !prevStatus);
   }
 
+  const getComments = useCallback(() => {
+    fetch(`/api/comments/${eventId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setComments(data.comment);
+      });
+  }, [eventId]);
+
   async function addCommentHandler(commentData: Comment) {
     // send data to API
     const response = await fetch(`/api/comments/${eventId}`, {
@@ -31,19 +40,15 @@ function Comments(props: { eventId: string }) {
       },
     });
 
-    const data = await response.json();
-    console.log(data);
+    await response.json();
+    getComments();
   }
 
   useEffect(() => {
     if (showComments) {
-      fetch(`/api/comments/${eventId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setComments(data.comment);
-        });
+      getComments();
     }
-  }, [eventId, showComments]);
+  }, [getComments, showComments]);
 
   return (
     <section className={classes.comments}>

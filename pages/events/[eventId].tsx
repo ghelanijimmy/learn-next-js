@@ -4,6 +4,7 @@ import EventSummary from "@/components/event-detail/event-summary";
 import { getEventById, getFeaturedEvents } from "@/utils/api";
 import { InferGetStaticPropsType } from "next";
 import Head from "next/head";
+import Comments from "@/components/input/comment";
 
 export default function EventDetailPage({
   event,
@@ -32,6 +33,7 @@ export default function EventDetailPage({
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
+      <Comments eventId={event.id} />
     </>
   );
 }

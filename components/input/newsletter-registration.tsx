@@ -1,26 +1,57 @@
 import classes from "./newsletter-registration.module.css";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import NotificationContext from "@/store/notification-context";
+import { STATUS } from "@/components/notification/notification";
 
 function NewsletterRegistration() {
   const [signedUp, setSignedUp] = useState(false);
   const emailRef = React.useRef<HTMLInputElement>(null);
+
+  const notificationContext = useContext(NotificationContext);
+
   async function registrationHandler(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const email = emailRef.current?.value;
-    const response = await fetch("/api/newsletter", {
-      method: "POST",
-      body: JSON.stringify({ email }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+
+    notificationContext.showNotification({
+      title: "Signing up...",
+      message: "Registering for newsletter.",
+      status: STATUS.PENDING,
     });
 
-    if (response.ok) {
+    const handleRequest = async () => {
+      const email = emailRef.current?.value;
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Something went wrong!");
+      }
+      notificationContext.showNotification({
+        title: "Success!",
+        message: "Successfully registered for newsletter.",
+        status: STATUS.SUCCESS,
+      });
       setSignedUp(true);
       emailRef.current!.value = "";
       setTimeout(() => {
         setSignedUp(false);
       }, 3000);
+    };
+
+    try {
+      await handleRequest();
+    } catch (err) {
+      notificationContext.showNotification({
+        title: "Error!",
+        message:
+          err instanceof Error ? err.message : String("Something went wrong!"),
+        status: STATUS.ERROR,
+      });
     }
   }
 

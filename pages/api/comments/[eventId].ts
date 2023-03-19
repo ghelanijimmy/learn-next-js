@@ -38,7 +38,7 @@ export default async function handler(
           "comments",
           newComment
         );
-        newComment.id = result.insertedId.toString();
+        newComment._id = result.insertedId.toString();
         res
           .status(201)
           .json({ message: "Comment added!", comment: newComment });
